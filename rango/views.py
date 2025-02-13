@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from rango.models import Category, Page
+from rango.models import Category, Page, UserProfile
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 
 
@@ -34,25 +34,13 @@ def add_category(request):
     return render(request, 'rango/add_category.html', {'form': form})
 
 
-def add_page(request, category_name_slug):
-    category = get_object_or_404(Category, slug=category_name_slug)
-    if request.method == 'POST':
-        form = PageForm(request.POST)
-        if form.is_valid():
-            page = form.save(commit=False)
-            page.category = category
-            page.views = 0
-            page.save()
-            return redirect(reverse('rango:show_category', kwargs={'category_name_slug': category_name_slug}))
-    else:
-        form = PageForm()
-    return render(request, 'rango/add_page.html', {'form': form, 'category': category})
-
-
 def register(request):
+    """ 处理用户注册 """
+    registered = False
+
     if request.method == 'POST':
         user_form = UserForm(request.POST)
-        profile_form = UserProfileForm(request.POST)
+        profile_form = UserProfileForm(request.POST, request.FILES)
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
@@ -65,11 +53,14 @@ def register(request):
                 profile.picture = request.FILES['picture']
             profile.save()
 
-            return redirect(reverse('rango:login'))
+            registered = True
+        else:
+            print(user_form.errors, profile_form.errors)
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
-    return render(request, 'rango/register.html', {'user_form': user_form, 'profile_form': profile_form})
+
+    return render(request, 'rango/register.html', {'user_form': user_form, 'profile_form': profile_form, 'registered': registered})
 
 
 def user_login(request):

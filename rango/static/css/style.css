@@ -30,4 +30,5 @@ img {
     height: auto;
     margin-top: 20px;
     border-radius: 10px;
+    border: 2px solid #007bff;
 }
