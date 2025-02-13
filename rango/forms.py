@@ -4,10 +4,10 @@ from django.contrib.auth.models import User
 
 
 class CategoryForm(forms.ModelForm):
-    name = forms.CharField(max_length=128, help_text="Please enter the category name.")
-    views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
-    likes = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
-    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+    name = forms.CharField(
+        max_length=128,
+        help_text="Please enter the category name."
+    )
 
     class Meta:
         model = Category
@@ -15,9 +15,14 @@ class CategoryForm(forms.ModelForm):
 
 
 class PageForm(forms.ModelForm):
-    title = forms.CharField(max_length=128, help_text="Please enter the title of the page.")
-    url = forms.URLField(max_length=200, help_text="Please enter the URL of the page.")
-    views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
+    title = forms.CharField(
+        max_length=128,
+        help_text="Please enter the title of the page."
+    )
+    url = forms.URLField(
+        max_length=200,
+        help_text="Please enter the URL of the page."
+    )
 
     class Meta:
         model = Page
@@ -32,8 +37,14 @@ class PageForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput(), help_text="Enter your password.")
-    confirm_password = forms.CharField(widget=forms.PasswordInput(), help_text="Re-enter your password.")
+    password = forms.CharField(
+        widget=forms.PasswordInput(),
+        help_text="Enter your password."
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(),
+        help_text="Re-enter your password."
+    )
 
     class Meta:
         model = User
@@ -52,8 +63,14 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    website = forms.URLField(required=False, help_text="Enter your website URL (optional).")
-    picture = forms.ImageField(required=False, help_text="Upload your profile picture (optional).")
+    website = forms.URLField(
+        required=False,
+        help_text="Enter your website URL (optional)."
+    )
+    picture = forms.ImageField(
+        required=False,
+        help_text="Upload your profile picture (optional)."
+    )
 
     class Meta:
         model = UserProfile

@@ -7,23 +7,26 @@ from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 
 
 def index(request):
+    """ 首页视图 """
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
-    context_dict = {'categories': category_list, 'pages': page_list}
-    return render(request, 'rango/index.html', context=context_dict)
+    return render(request, 'rango/index.html', {'categories': category_list, 'pages': page_list})
 
 
 def about(request):
+    """ 关于页面 """
     return render(request, 'rango/about.html')
 
 
 def show_category(request, category_name_slug):
+    """ 显示分类详情 """
     category = get_object_or_404(Category, slug=category_name_slug)
     pages = Page.objects.filter(category=category)
     return render(request, 'rango/category.html', {'category': category, 'pages': pages})
 
 
 def add_category(request):
+    """ 处理分类添加 """
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
@@ -32,6 +35,24 @@ def add_category(request):
     else:
         form = CategoryForm()
     return render(request, 'rango/add_category.html', {'form': form})
+
+
+def add_page(request, category_name_slug):
+    """ 允许用户添加新的页面到指定的分类 """
+    category = get_object_or_404(Category, slug=category_name_slug)
+
+    if request.method == 'POST':
+        form = PageForm(request.POST)
+        if form.is_valid():
+            page = form.save(commit=False)
+            page.category = category
+            page.views = 0
+            page.save()
+            return redirect(reverse('rango:show_category', kwargs={'category_name_slug': category.slug}))
+    else:
+        form = PageForm()
+
+    return render(request, 'rango/add_page.html', {'form': form, 'category': category})
 
 
 def register(request):
@@ -60,10 +81,15 @@ def register(request):
         user_form = UserForm()
         profile_form = UserProfileForm()
 
-    return render(request, 'rango/register.html', {'user_form': user_form, 'profile_form': profile_form, 'registered': registered})
+    return render(request, 'rango/register.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'registered': registered
+    })
 
 
 def user_login(request):
+    """ 处理用户登录 """
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -80,5 +106,6 @@ def user_login(request):
 
 @login_required
 def user_logout(request):
+    """ 处理用户登出 """
     logout(request)
     return redirect(reverse('rango:index'))
