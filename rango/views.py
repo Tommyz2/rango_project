@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.http import HttpResponse
+from datetime import datetime
 from rango.models import Category, Page, UserProfile
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 
@@ -14,9 +16,23 @@ def index(request):
 
 
 def about(request):
-    """ 关于页面 """
-    return render(request, 'rango/about.html')
+    """ 关于页面，记录访问次数 """
+    visits = request.session.get('visits', 0)
+    last_visit_time = request.session.get('last_visit', str(datetime.now()))
 
+    try:
+        last_visit = datetime.strptime(last_visit_time[:19], "%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        last_visit = datetime.now()
+
+    # 5 秒后刷新计数（仅用于测试，实际可设为 24 小时）
+    if (datetime.now() - last_visit).seconds > 5:
+        visits += 1
+        request.session['visits'] = visits
+        request.session['last_visit'] = str(datetime.now())
+        request.session.modified = True  # 强制 Django 记录 session
+
+    return render(request, 'rango/about.html', {'visits': visits})
 
 def show_category(request, category_name_slug):
     """ 显示分类详情 """
@@ -49,6 +65,8 @@ def add_page(request, category_name_slug):
             page.views = 0
             page.save()
             return redirect(reverse('rango:show_category', kwargs={'category_name_slug': category.slug}))
+        else:
+            print(form.errors)
     else:
         form = PageForm()
 
