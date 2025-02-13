@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rango - Home</title>
+</head>
+<body>
+    <h1>Welcome to Rango!</h1>
+    <p>Hey there partner! Here is the index page.</p>
+
+    <h2>Top Categories</h2>
+    <ul>
+        {% for category in categories %}
+            <li><a href="{% url 'rango:show_category' category.slug %}">{{ category.name }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
