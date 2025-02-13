@@ -44,7 +44,7 @@ ROOT_URLCONF = 'rango_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # ✅ 确保 Django 能找到 templates 目录
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # 确保 Django 能找到 templates 目录
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,4 +84,12 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # ✅ 添加 static 目录支持
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # 添加 static 目录支持
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 让 Django 可以收集静态文件
+
+# Media files (for user-uploaded content like images)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 上传的图片会存放在此目录
+
+# Default primary key field type (for future Django versions)
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
