@@ -34,6 +34,7 @@ def about(request):
 
     return render(request, 'rango/about.html', {'visits': visits})
 
+
 def show_category(request, category_name_slug):
     """ 显示分类详情 """
     category = get_object_or_404(Category, slug=category_name_slug)
@@ -41,6 +42,7 @@ def show_category(request, category_name_slug):
     return render(request, 'rango/category.html', {'category': category, 'pages': pages})
 
 
+@login_required
 def add_category(request):
     """ 处理分类添加 """
     if request.method == 'POST':
@@ -53,6 +55,7 @@ def add_category(request):
     return render(request, 'rango/add_category.html', {'form': form})
 
 
+@login_required
 def add_page(request, category_name_slug):
     """ 允许用户添加新的页面到指定的分类 """
     category = get_object_or_404(Category, slug=category_name_slug)
