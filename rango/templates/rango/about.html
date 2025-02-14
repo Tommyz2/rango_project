@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>About Rango</title>
-</head>
-<body>
+{% extends 'rango/base.html' %}
+
+{% block title %}About Rango{% endblock %}
+
+{% block content %}
     <h1>About Rango</h1>
-    <p>This is the about page.</p>
+    <p>This is the about page of Rango.</p>
+    
     <p>You have visited this page <strong>{{ visits }}</strong> times.</p>
-    <p>Go back to the <a href="{% url 'rango:index' %}">home page</a>.</p>
-</body>
-</html>
+    
+    <p><a href="{% url 'rango:index' %}">Back to Home</a></p>
+{% endblock %}

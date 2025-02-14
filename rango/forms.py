@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 
 class CategoryForm(forms.ModelForm):
+    """ 处理分类表单 """
     name = forms.CharField(
         max_length=128,
         help_text="Please enter the category name."
@@ -15,6 +16,7 @@ class CategoryForm(forms.ModelForm):
 
 
 class PageForm(forms.ModelForm):
+    """ 处理页面表单 """
     title = forms.CharField(
         max_length=128,
         help_text="Please enter the title of the page."
@@ -37,6 +39,7 @@ class PageForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
+    """ 用户注册表单，包含密码确认 """
     password = forms.CharField(
         widget=forms.PasswordInput(),
         help_text="Enter your password."
@@ -57,12 +60,13 @@ class UserForm(forms.ModelForm):
         confirm_password = cleaned_data.get('confirm_password')
 
         if password and confirm_password and password != confirm_password:
-            raise forms.ValidationError("Passwords do not match.")
+            self.add_error('confirm_password', "Passwords do not match.")
 
         return cleaned_data
 
 
 class UserProfileForm(forms.ModelForm):
+    """ 用户资料表单，包含网站和头像 """
     website = forms.URLField(
         required=False,
         help_text="Enter your website URL (optional)."
@@ -75,3 +79,10 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('website', 'picture')
+
+    def clean_website(self):
+        """ 确保网站 URL 以 http:// 或 https:// 开头 """
+        website = self.cleaned_data.get('website')
+        if website and not website.startswith(('http://', 'https://')):
+            website = 'http://' + website
+        return website

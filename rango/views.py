@@ -16,7 +16,7 @@ def index(request):
 
 
 def about(request):
-    """ 关于页面，记录访问次数 """
+    """ 记录访问次数 """
     visits = request.session.get('visits', 0)
     last_visit_time = request.session.get('last_visit', str(datetime.now()))
 
@@ -25,12 +25,11 @@ def about(request):
     except ValueError:
         last_visit = datetime.now()
 
-    # 5 秒后刷新计数（仅用于测试，实际可设为 24 小时）
-    if (datetime.now() - last_visit).seconds > 5:
+    if (datetime.now() - last_visit).seconds > 5:  # 测试用 5 秒，实际可设 24 小时
         visits += 1
         request.session['visits'] = visits
         request.session['last_visit'] = str(datetime.now())
-        request.session.modified = True  # 强制 Django 记录 session
+        request.session.modified = True
 
     return render(request, 'rango/about.html', {'visits': visits})
 
@@ -42,7 +41,6 @@ def show_category(request, category_name_slug):
     return render(request, 'rango/category.html', {'category': category, 'pages': pages})
 
 
-@login_required
 def add_category(request):
     """ 处理分类添加 """
     if request.method == 'POST':
@@ -55,7 +53,6 @@ def add_category(request):
     return render(request, 'rango/add_category.html', {'form': form})
 
 
-@login_required
 def add_page(request, category_name_slug):
     """ 允许用户添加新的页面到指定的分类 """
     category = get_object_or_404(Category, slug=category_name_slug)
@@ -68,8 +65,6 @@ def add_page(request, category_name_slug):
             page.views = 0
             page.save()
             return redirect(reverse('rango:show_category', kwargs={'category_name_slug': category.slug}))
-        else:
-            print(form.errors)
     else:
         form = PageForm()
 
@@ -77,7 +72,7 @@ def add_page(request, category_name_slug):
 
 
 def register(request):
-    """ 处理用户注册 """
+    """ 用户注册 """
     registered = False
 
     if request.method == 'POST':
@@ -110,7 +105,7 @@ def register(request):
 
 
 def user_login(request):
-    """ 处理用户登录 """
+    """ 处理用户登录，支持 next 参数 """
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -118,7 +113,8 @@ def user_login(request):
 
         if user:
             login(request, user)
-            return redirect(reverse('rango:index'))
+            next_url = request.GET.get('next', reverse('rango:index'))
+            return redirect(next_url)
         else:
             return render(request, 'rango/login.html', {'error': 'Invalid credentials'})
 
