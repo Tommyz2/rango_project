@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 class CategoryForm(forms.ModelForm):
-    """ 处理分类表单 """
+    """ Handles the category form """
     name = forms.CharField(
         max_length=128,
         help_text="Please enter the category name."
@@ -16,7 +16,7 @@ class CategoryForm(forms.ModelForm):
 
 
 class PageForm(forms.ModelForm):
-    """ 处理页面表单 """
+    """ Handles the page form """
     title = forms.CharField(
         max_length=128,
         help_text="Please enter the title of the page."
@@ -31,7 +31,7 @@ class PageForm(forms.ModelForm):
         exclude = ('category',)
 
     def clean_url(self):
-        """ 确保 URL 以 http:// 或 https:// 开头 """
+        """ Ensure the URL starts with http:// or https:// """
         url = self.cleaned_data.get('url')
         if url and not url.startswith(('http://', 'https://')):
             url = 'http://' + url
@@ -39,7 +39,7 @@ class PageForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
-    """ 用户注册表单，包含密码确认 """
+    """ User registration form with password confirmation """
     password = forms.CharField(
         widget=forms.PasswordInput(),
         help_text="Enter your password."
@@ -54,7 +54,7 @@ class UserForm(forms.ModelForm):
         fields = ('username', 'email', 'password')
 
     def clean(self):
-        """ 确保两次输入的密码一致 """
+        """ Ensure the two entered passwords match """
         cleaned_data = super().clean()
         password = cleaned_data.get('password')
         confirm_password = cleaned_data.get('confirm_password')
@@ -66,7 +66,7 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    """ 用户资料表单，包含网站和头像 """
+    """ User profile form including website and profile picture """
     website = forms.URLField(
         required=False,
         help_text="Enter your website URL (optional)."
@@ -81,7 +81,7 @@ class UserProfileForm(forms.ModelForm):
         fields = ('website', 'picture')
 
     def clean_website(self):
-        """ 确保网站 URL 以 http:// 或 https:// 开头 """
+        """ Ensure the website URL starts with http:// or https:// """
         website = self.cleaned_data.get('website')
         if website and not website.startswith(('http://', 'https://')):
             website = 'http://' + website

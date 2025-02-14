@@ -6,7 +6,7 @@ from .models import UserProfile
 from django.contrib import admin
 
 class PageAdmin(admin.ModelAdmin):
-    list_display = ('category', 'title', 'url','views')  # 按顺序显示这三个字段
+    list_display = ('category', 'title', 'url','views')  
 
 admin.site.register(Page, PageAdmin)
 

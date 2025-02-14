@@ -7,7 +7,7 @@ class Category(models.Model):
     name = models.CharField(max_length=128, null=False, default="Unnamed")  
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
-    slug = models.SlugField(blank=True, unique=True)  # 确保 slug 是唯一的
+    slug = models.SlugField(blank=True, unique=True)  
 
     class Meta:
         verbose_name_plural = 'Categories'
@@ -16,7 +16,7 @@ class Category(models.Model):
         return self.name  
 
     def save(self, *args, **kwargs):
-        if not self.slug and self.name:  # 确保 name 存在才生成 slug
+        if not self.slug and self.name:  
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 

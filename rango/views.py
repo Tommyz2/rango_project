@@ -9,14 +9,14 @@ from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 
 
 def index(request):
-    """ 首页视图 """
+    """ Display the homepage """
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
     return render(request, 'rango/index.html', {'categories': category_list, 'pages': page_list})
 
 
 def about(request):
-    """ 记录访问次数 """
+    """ Track visit count """
     visits = request.session.get('visits', 0)
     last_visit_time = request.session.get('last_visit', str(datetime.now()))
 
@@ -25,7 +25,7 @@ def about(request):
     except ValueError:
         last_visit = datetime.now()
 
-    if (datetime.now() - last_visit).seconds > 5:  # 测试用 5 秒，实际可设 24 小时
+    if (datetime.now() - last_visit).seconds > 86400:  
         visits += 1
         request.session['visits'] = visits
         request.session['last_visit'] = str(datetime.now())
@@ -35,14 +35,14 @@ def about(request):
 
 
 def show_category(request, category_name_slug):
-    """ 显示分类详情 """
+    """ Display category details """
     category = get_object_or_404(Category, slug=category_name_slug)
     pages = Page.objects.filter(category=category)
     return render(request, 'rango/category.html', {'category': category, 'pages': pages})
 
 
 def add_category(request):
-    """ 处理分类添加 """
+    """ Handle category creation """
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
@@ -54,7 +54,7 @@ def add_category(request):
 
 
 def add_page(request, category_name_slug):
-    """ 允许用户添加新的页面到指定的分类 """
+    """ Allow users to add a new page to a specific category """
     category = get_object_or_404(Category, slug=category_name_slug)
 
     if request.method == 'POST':
@@ -72,7 +72,7 @@ def add_page(request, category_name_slug):
 
 
 def register(request):
-    """ 用户注册 """
+    """ Handle user registration """
     registered = False
 
     if request.method == 'POST':
@@ -105,7 +105,7 @@ def register(request):
 
 
 def user_login(request):
-    """ 处理用户登录，支持 next 参数 """
+    """ Handle user login, supporting 'next' parameter """
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -123,6 +123,6 @@ def user_login(request):
 
 @login_required
 def user_logout(request):
-    """ 处理用户登出 """
+    """ Handle user logout """
     logout(request)
     return redirect(reverse('rango:index'))
